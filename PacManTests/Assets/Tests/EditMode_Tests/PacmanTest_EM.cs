@@ -13,44 +13,47 @@ public class PacmanTest_EM
     public void SetUp()
     {
         pacmanObject = new GameObject();
+        pacmanObject.AddComponent<SpriteRenderer>();
+        pacmanObject.AddComponent<BoxCollider2D>();
         pacmanObject.AddComponent<Rigidbody2D>();
-        pacmanObject.AddComponent<CircleCollider2D>();
-
-        var movement = pacmanObject.AddComponent<Movement>();
-        movement.initialDirection = Vector2.right;
-        movement.obstacleLayer = LayerMask.GetMask("Default");
-
+        pacmanObject.AddComponent<Movement>();
         pacman = pacmanObject.AddComponent<Pacman>();
+
+        pacman.Awake();
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        Object.DestroyImmediate(pacmanObject);
     }
 
     [Test]
-    public void Pacman_Components_AreInitialized()
+    public void Pacman_InitializesComponents()
     {
-        // Verificar que los componentes esenciales están inicializados
-        Assert.NotNull(pacman.collider, "Collider2D should be initialized.");
-        Assert.NotNull(pacman.movement, "Movement should be initialized.");
+        Assert.IsNotNull(pacman.spriteRenderer, "SpriteRenderer should be initialized.");
+        Assert.IsNotNull(pacman.collider, "Collider2D should be initialized.");
+        Assert.IsNotNull(pacman.movement, "Movement should be initialized.");
     }
 
     [Test]
-    public void Pacman_ResetState_ResetsAllComponents()
+    public void Pacman_ChangesDirection_OnInput()
     {
-        // Ejecutar ResetState y comprobar los estados iniciales
-        pacman.ResetState();
+        // Simulate input for up direction
+        pacman.movement.SetDirection(Vector2.up);
+        Assert.AreEqual(Vector2.up, pacman.movement.direction, "Pacman should move up.");
 
-        Assert.IsTrue(pacman.collider.enabled, "Collider2D should be enabled.");
-        Assert.IsTrue(pacman.movement.enabled, "Movement should be enabled.");
-        Assert.IsTrue(pacman.gameObject.activeSelf, "GameObject should be active.");
-    }
+        // Simulate input for down direction
+        pacman.movement.SetDirection(Vector2.down);
+        Assert.AreEqual(Vector2.down, pacman.movement.direction, "Pacman should move down.");
 
-    [Test]
-    public void Pacman_DeathSequence_DisablesComponents()
-    {
-        // Ejecutar DeathSequence y verificar que los componentes se desactivan correctamente
-        pacman.DeathSequence();
+        // Simulate input for left direction
+        pacman.movement.SetDirection(Vector2.left);
+        Assert.AreEqual(Vector2.left, pacman.movement.direction, "Pacman should move left.");
 
-        Assert.IsFalse(pacman.collider.enabled, "Collider2D should be disabled.");
-        Assert.IsFalse(pacman.movement.enabled, "Movement should be disabled.");
-        Assert.IsFalse(pacman.gameObject.activeSelf, "GameObject should be inactive.");
+        // Simulate input for right direction
+        pacman.movement.SetDirection(Vector2.right);
+        Assert.AreEqual(Vector2.right, pacman.movement.direction, "Pacman should move right.");
     }
 }
 

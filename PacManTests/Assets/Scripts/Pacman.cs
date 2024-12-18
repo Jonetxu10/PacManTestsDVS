@@ -8,7 +8,7 @@ public class Pacman : MonoBehaviour
     public new Collider2D collider { get; private set; }
     public Movement movement { get; private set; }
 
-    private void Awake()
+    public void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         collider = GetComponent<Collider2D>();
