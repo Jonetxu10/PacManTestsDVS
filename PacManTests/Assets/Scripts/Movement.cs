@@ -5,18 +5,18 @@ public class Movement : MonoBehaviour
 {
     public float speed = 8f;
     public float speedMultiplier = 1f;
-    public Vector2 initialDirection;
+    public Vector2 initialDirection = Vector2.right;
     public LayerMask obstacleLayer;
 
     public new Rigidbody2D rigidbody { get; private set; }
-    public Vector2 direction { get; private set; }
+    public Vector2 direction { get; private set; } = Vector2.right;
     public Vector2 nextDirection { get; private set; }
-    public Vector3 startingPosition { get; private set; }
+    public Vector3 startingPosition { get; private set; } = new Vector3(0f, -9.5f, -5f);
 
-    private void Awake()
+    public void Awake()
     {
         rigidbody = GetComponent<Rigidbody2D>();
-        startingPosition = transform.position;
+        startingPosition = new Vector3(0f, -9.5f, -5f);
     }
 
     private void Start()
