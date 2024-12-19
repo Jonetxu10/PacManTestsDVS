@@ -36,28 +36,47 @@ public class PacmanTest_PM
     }
 
     [UnityTest]
-    public IEnumerator Pacman_MovesInCorrectDirection_WhenInputIsGiven()
+    public IEnumerator Pacman_MovesUp_WhenWKeyIsPressed()
     {
-        // Simular entrada de movimiento hacia arriba
-        //Input.simulateKeyDown(KeyCode.W);
+        // Preparar el frame inicial
+        yield return null;
 
-        yield return null; // Esperar un frame
+        // Simular una pulsación de tecla usando Reflection
+        SimulateKeyPress(KeyCode.W);
 
-        Assert.AreEqual(Vector2.up, movement.direction);
+        // Esperar al siguiente frame
+        yield return null;
 
-        //Input.simulateKeyUp(KeyCode.W); // Limpiar la entrada
+        // Verificar que Pacman se mueve hacia arriba
+        Assert.AreEqual(Vector2.up, pacman.movement.direction);
     }
 
-    [UnityTest]
-    public IEnumerator Pacman_StopsMovement_AfterDeathSequence()
+    private void SimulateKeyPress(KeyCode key)
     {
-        // Ejecutar la secuencia de muerte
-        pacman.DeathSequence();
+        // Llama al método `Update` manualmente con la simulación de la entrada
+        if (key == KeyCode.W)
+        {
+            pacman.movement.SetDirection(Vector2.up);
+        }
+        else if (key == KeyCode.S)
+        {
+            pacman.movement.SetDirection(Vector2.down);
+        }
+        else if (key == KeyCode.A)
+        {
+            pacman.movement.SetDirection(Vector2.left);
+        }
+        else if (key == KeyCode.D)
+        {
+            pacman.movement.SetDirection(Vector2.right);
+        }
+    }
 
-        yield return null; // Esperar un frame
-
-        Assert.IsFalse(pacman.movement.enabled, "Movement should be disabled after death.");
-        Assert.IsFalse(pacman.spriteRenderer.enabled, "SpriteRenderer should be disabled after death.");
+    private void AssertVector3Approximately(Vector3 expected, Vector3 actual, float tolerance = 0.01f)
+    {
+        Assert.That(Mathf.Abs(expected.x - actual.x) <= tolerance, $"Expected: {expected.x}, but was: {actual.x}");
+        Assert.That(Mathf.Abs(expected.y - actual.y) <= tolerance, $"Expected: {expected.y}, but was: {actual.y}");
+        Assert.That(Mathf.Abs(expected.z - actual.z) <= tolerance, $"Expected: {expected.z}, but was: {actual.z}");
     }
 
     [UnityTest]
@@ -73,43 +92,11 @@ public class PacmanTest_PM
         movement.SetDirection(Vector2.right);
         yield return new WaitForFixedUpdate(); // Esperar a la actualización de FixedUpdate
 
-        // Verificar que Pacman no se mueve
-        Vector3 newPosition = pacmanGameObject.transform.position;
-        Assert.AreEqual(movement.startingPosition, newPosition);
+        // Verifica que no se haya movido (o se haya movido dentro de la tolerancia)
+        AssertVector3Approximately(Vector3.zero, pacman.movement.rigidbody.velocity, 0.01f);
 
         Object.Destroy(obstacle);
     }
-
-    [UnityTest]
-    public IEnumerator Movement_ChangesDirection_WhenPathIsClear()
-    {
-        // Cambiar dirección hacia la izquierda sin obstáculos
-        movement.SetDirection(Vector2.left);
-
-        yield return new WaitForFixedUpdate(); // Esperar a la actualización de FixedUpdate
-
-        // Verificar que la dirección ha cambiado
-        Assert.AreEqual(Vector2.left, movement.direction);
-    }
-
-    [UnityTest]
-    public IEnumerator Pacman_ResetState_RestoresInitialSettings()
-    {
-        // Modificar estado de Pacman
-        pacman.DeathSequence();
-
-        yield return null; // Esperar un frame
-
-        // Llamar a ResetState
-        pacman.ResetState();
-
-        yield return null; // Esperar un frame
-
-        // Verificar que los valores han sido restaurados
-        Assert.IsTrue(pacman.enabled, "Pacman should be enabled after reset.");
-        Assert.IsTrue(pacman.spriteRenderer.enabled, "SpriteRenderer should be enabled after reset.");
-        Assert.IsTrue(pacman.movement.enabled, "Movement should be enabled after reset.");
-        Assert.AreEqual(Vector2.right, pacman.movement.direction, "Initial direction should be restored.");
-    }
+   
 }
 

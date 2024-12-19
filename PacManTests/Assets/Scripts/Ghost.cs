@@ -7,10 +7,10 @@ namespace PacManGame
     public class Ghost : MonoBehaviour
     {
         public Movement movement { get; set; }
-        public GhostHome home { get; private set; }
-        public GhostScatter scatter { get; private set; }
-        public GhostChase chase { get; private set; }
-        public GhostFrightened frightened { get; private set; }
+        public GhostHome home { get; set; }
+        public GhostScatter scatter { get; set; }
+        public GhostChase chase { get; set; }
+        public GhostFrightened frightened { get; set; }
         public GhostBehavior initialBehavior;
         public Transform target;
         public int points = 200;
