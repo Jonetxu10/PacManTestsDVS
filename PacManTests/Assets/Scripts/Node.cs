@@ -1,31 +1,39 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Node : MonoBehaviour
+namespace PacManGame
 {
-    public LayerMask obstacleLayer;
-    public List<Vector2> availableDirections { get; private set; }
-
-    private void Start()
+    public class Node : MonoBehaviour
     {
-        availableDirections = new List<Vector2>();
+        public LayerMask obstacleLayer;
+        public List<Vector2> availableDirections { get; private set; }
 
-        // We determine if the direction is available by box casting to see if
-        // we hit a wall. The direction is added to list if available.
-        CheckAvailableDirection(Vector2.up);
-        CheckAvailableDirection(Vector2.down);
-        CheckAvailableDirection(Vector2.left);
-        CheckAvailableDirection(Vector2.right);
-    }
+        private void Start()
+        {
+            availableDirections = new List<Vector2>();
 
-    private void CheckAvailableDirection(Vector2 direction)
-    {
-        RaycastHit2D hit = Physics2D.BoxCast(transform.position, Vector2.one * 0.5f, 0f, direction, 1f, obstacleLayer);
+            CheckAvailableDirection(Vector2.up);
+            CheckAvailableDirection(Vector2.down);
+            CheckAvailableDirection(Vector2.left);
+            CheckAvailableDirection(Vector2.right);
+        }
 
-        // If no collider is hit then there is no obstacle in that direction
-        if (hit.collider == null) {
-            availableDirections.Add(direction);
+        private void CheckAvailableDirection(Vector2 direction)
+        {
+            RaycastHit2D hit = Physics2D.BoxCast(transform.position, Vector2.one * 0.5f, 0f, direction, 1f, obstacleLayer);
+
+            if (hit.collider == null)
+            {
+                availableDirections.Add(direction);
+            }
+        }
+
+        public void AddAvailableDirection(Vector2 direction)
+        {
+            if (!availableDirections.Contains(direction))
+            {
+                availableDirections.Add(direction);
+            }
         }
     }
-
 }

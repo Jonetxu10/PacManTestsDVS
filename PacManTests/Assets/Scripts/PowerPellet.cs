@@ -1,12 +1,16 @@
 using UnityEngine;
 
-public class PowerPellet : Pellet
+namespace PacManGame
 {
-    public float duration = 8f;
-
-    protected override void Eat()
+    public class PowerPellet : Pellet
     {
-        FindObjectOfType<GameManager>().PowerPelletEaten(this);
-    }
+        public float duration = 8f;
 
+        protected override void Eat()
+        {
+            FindObjectOfType<GameManager>().PowerPelletEaten(this);
+        }
+
+    }
 }
+

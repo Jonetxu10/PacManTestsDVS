@@ -1,34 +1,34 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Ghost))]
-public abstract class GhostBehavior : MonoBehaviour
+namespace PacManGame
 {
-    public Ghost ghost { get; private set; }
-    public float duration;
-
-    private void Awake()
+    [RequireComponent(typeof(Ghost))]
+    public abstract class GhostBehavior : MonoBehaviour
     {
-        ghost = GetComponent<Ghost>();
+        public Ghost ghost { get; private set; }
+        public float duration;
+
+        private void Awake()
+        {
+            ghost = GetComponent<Ghost>();
+        }
+
+        public void Enable()
+        {
+            Enable(duration);
+        }
+
+        public virtual void Enable(float duration)
+        {
+            enabled = true;
+            CancelInvoke();
+            Invoke(nameof(Disable), duration);
+        }
+
+        public virtual void Disable()
+        {
+            enabled = false;
+            CancelInvoke();
+        }
     }
-
-    public void Enable()
-    {
-        Enable(duration);
-    }
-
-    public virtual void Enable(float duration)
-    {
-        enabled = true;
-
-        CancelInvoke();
-        Invoke(nameof(Disable), duration);
-    }
-
-    public virtual void Disable()
-    {
-        enabled = false;
-
-        CancelInvoke();
-    }
-
 }
