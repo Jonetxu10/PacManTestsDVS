@@ -14,20 +14,16 @@ namespace PacManGame
         public override void Enable(float duration)
         {
             base.Enable(duration);
-            Debug.Log("llego aquí 1");
             body.enabled = false;
             eyes.enabled = false;
             blue.enabled = true;
             white.enabled = false;
-            Debug.Log("llego aquí 2");
             Invoke(nameof(Flash), duration / 2f);
-            Debug.Log("llego aquí 3");
         }
 
         public override void Disable()
         {
             base.Disable();
-
             body.enabled = true;
             eyes.enabled = true;
             blue.enabled = false;
@@ -78,11 +74,8 @@ namespace PacManGame
                 Vector2 direction = Vector2.zero;
                 float maxDistance = float.MinValue;
 
-                // Find the available direction that moves farthest from pacman
                 foreach (Vector2 availableDirection in node.availableDirections)
                 {
-                    // If the distance in this direction is greater than the current
-                    // max distance then this direction becomes the new farthest
                     Vector3 newPosition = transform.position + new Vector3(availableDirection.x, availableDirection.y);
                     float distance = (ghost.target.position - newPosition).sqrMagnitude;
 
@@ -107,8 +100,5 @@ namespace PacManGame
                 }
             }
         }
-
     }
 }
-
-
