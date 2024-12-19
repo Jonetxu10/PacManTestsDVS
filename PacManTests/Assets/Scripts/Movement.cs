@@ -26,16 +26,12 @@ public class Movement : MonoBehaviour
 
     public void ResetState()
     {
-        Debug.Log("Movement ResetState started");
-
         speedMultiplier = 1f;
         direction = initialDirection;
         nextDirection = Vector2.zero;
         transform.position = startingPosition;
         rigidbody.isKinematic = false;
         enabled = true;
-
-        Debug.Log($"Movement ResetState completed: position={transform.position}, direction={direction}, isKinematic={rigidbody.isKinematic}");
     }
 
     private void Update()
