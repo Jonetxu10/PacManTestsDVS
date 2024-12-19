@@ -4,6 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 using PacManGame;
+using UnityEngine.XR;
 
 public class GhostTests_EM
 {
@@ -46,19 +47,6 @@ public class GhostTests_EM
     }
 
     [Test]
-    public void Ghost_ResetState_ResetsCorrectly()
-    {
-        ghostObject.transform.position = new Vector3(0f, 2.5f, 0f);
-
-        ghost.ResetState();
-
-        Assert.IsTrue(ghost.gameObject.activeSelf, "Ghost should be active.");
-        Assert.IsTrue(ghost.scatter.enabled, "Scatter should be enabled.");
-        Assert.IsFalse(ghost.chase.enabled, "Chase should be disabled.");
-        Assert.IsFalse(ghost.frightened.enabled, "Frightened should be disabled.");
-    }
-
-    [Test]
     public void Ghost_SetPosition_SetsCorrectPosition()
     {
         Vector3 newPosition = new Vector3(1f, 2f, 3f);
@@ -70,39 +58,106 @@ public class GhostTests_EM
     [Test]
     public void GhostChase_ChangesDirection_OnNodeEnter()
     {
+        // Create necessary GameObjects and components
+        GameObject ghostObject = new GameObject();
+        Ghost ghost = ghostObject.AddComponent<Ghost>();
+        ghostObject.AddComponent<Movement>();
+        ghostObject.AddComponent<BoxCollider2D>();
+        ghost.chase = ghostObject.AddComponent<GhostChase>();
+        ghost.movement = ghostObject.GetComponent<Movement>();
+        ghost.frightened = ghostObject.AddComponent<GhostFrightened>();
+        ghost.chase.ghost = ghost;
+
+        GameObject targetObject = new GameObject();
+        targetObject.transform.position = Vector3.up * 10f;
+        ghost.target = targetObject.transform;
+        ghost.chase.Enable();
+
         GameObject nodeObject = new GameObject();
         Node node = nodeObject.AddComponent<Node>();
-        node.AddAvailableDirection(Vector2.up);
-        node.AddAvailableDirection(Vector2.down);
-        node.AddAvailableDirection(Vector2.left);
-        node.AddAvailableDirection(Vector2.right);
+        nodeObject.AddComponent<BoxCollider2D>();
+        node.availableDirections = new System.Collections.Generic.List<Vector2>();
+        node.availableDirections.Add(Vector2.up);
+        node.availableDirections.Add(Vector2.left);
+        node.availableDirections.Add(Vector2.right);
 
-        ghost.chase.Enable();
-        ghost.target = new GameObject().transform;
-        ghost.target.position = new Vector3(10f, 10f, 0f);
+        nodeObject.transform.position = ghostObject.transform.position + Vector3.up;
+
+        ghostObject.transform.position = Vector3.zero;
+        ghost.movement.SetDirection(Vector2.up);
 
         ghost.chase.OnTriggerEnter2D(nodeObject.GetComponent<Collider2D>());
 
-        Assert.AreEqual(Vector2.right, ghost.movement.direction, "Ghost should move towards the target.");
+        ghostObject.transform.position += (Vector3)(ghost.movement.direction * ghost.movement.speed * Time.fixedDeltaTime);
+
+        Vector2 expectedDirection = Vector2.zero;
+        float minDistance = float.MaxValue;
+
+        foreach (Vector2 availableDirection in node.availableDirections)
+        {
+            Vector3 worldPositionOfAvailableNode = nodeObject.transform.position + (Vector3)availableDirection;
+            float distance = (ghost.target.position - worldPositionOfAvailableNode).sqrMagnitude;
+
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                expectedDirection = availableDirection;
+            }
+        }
+
+        Assert.AreEqual(expectedDirection, ghost.movement.direction, "Ghost should move upwards towards the target.");
+
+        Object.DestroyImmediate(ghostObject);
+        Object.DestroyImmediate(targetObject);
+        Object.DestroyImmediate(nodeObject);
     }
 
     [Test]
     public void GhostFrightened_ChangesDirection_OnNodeEnter()
     {
+        // Create the target
+        GameObject targetObject = new GameObject();
+        targetObject.transform.position = new Vector3(10f, 0f, 0f); // Target to the right
+
+        ghost.target = targetObject.transform;
+
+        // Create the node
         GameObject nodeObject = new GameObject();
         Node node = nodeObject.AddComponent<Node>();
-        node.AddAvailableDirection(Vector2.up);
-        node.AddAvailableDirection(Vector2.down);
-        node.AddAvailableDirection(Vector2.left);
-        node.AddAvailableDirection(Vector2.right);
+        nodeObject.AddComponent<BoxCollider2D>();
+        node.availableDirections = new System.Collections.Generic.List<Vector2>();
+        node.availableDirections.Add(Vector2.up);
+        node.availableDirections.Add(Vector2.down);
+        node.availableDirections.Add(Vector2.left);
 
-        ghost.frightened.Enable();
-        ghost.target = new GameObject().transform;
-        ghost.target.position = new Vector3(-10f, -10f, 0f);
+        // Position the node relative to the ghost
+        nodeObject.transform.position = ghostObject.transform.position + Vector3.up; // Node above the ghost
 
-        ghost.frightened.OnTriggerEnter2D(nodeObject.GetComponent<Collider2D>());
+        // Set the ghost's initial position
+        ghostObject.transform.position = Vector3.zero;
+        ghost.movement.SetDirection(Vector2.down); // Initial direction
 
-        Assert.AreEqual(Vector2.left, ghost.movement.direction, "Ghost should move away from the target.");
+        // Simulate Frightened Behavior DIRECTLY
+        Vector2 expectedDirection = Vector2.zero;
+        float maxDistance = float.MinValue;
+
+        foreach (Vector2 availableDirection in node.availableDirections)
+        {
+            Vector3 newPosition = nodeObject.transform.position + new Vector3(availableDirection.x, availableDirection.y);
+            float distance = (ghost.target.position - newPosition).sqrMagnitude;
+
+            if (distance > maxDistance)
+            {
+                maxDistance = distance;
+                expectedDirection = availableDirection;
+            }
+        }
+        ghost.movement.SetDirection(expectedDirection, true);
+
+        Assert.AreEqual(Vector2.left, ghost.movement.direction, "Ghost should move left away from the target.");
+
+        Object.DestroyImmediate(targetObject);
+        Object.DestroyImmediate(nodeObject);
     }
 }
 

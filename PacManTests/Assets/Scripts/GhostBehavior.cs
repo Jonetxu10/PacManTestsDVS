@@ -5,7 +5,7 @@ namespace PacManGame
     [RequireComponent(typeof(Ghost))]
     public abstract class GhostBehavior : MonoBehaviour
     {
-        public Ghost ghost { get; private set; }
+        public Ghost ghost { get; set; }
         public float duration;
 
         private void Awake()

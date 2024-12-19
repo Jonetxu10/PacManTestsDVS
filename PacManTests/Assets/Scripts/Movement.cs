@@ -44,7 +44,7 @@ public class Movement : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
+    public void FixedUpdate()
     {
         Vector2 position = rigidbody.position;
         Vector2 translation = direction * speed * speedMultiplier * Time.fixedDeltaTime;
