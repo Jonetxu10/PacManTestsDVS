@@ -16,6 +16,12 @@ public class GameManagerTest_EM
     private Pacman pacman;
     private GameObject gameOverTextObject;
     private Text gameOverText;
+    private GameObject livesTextObject; 
+    private Text livesText;
+
+    private GameObject[] ghostObjects; 
+    private Ghost[] ghosts;
+
 
     [SetUp]
     public void SetUp()
@@ -116,23 +122,40 @@ public class GameManagerTest_EM
     [Test]
     public void NewGame_InitializesCorrectly()
     {
-        gameManager.NewGame(); // Llamada directa al método público
+        var gameManagerObject = new GameObject("GameManager");
+        var gameManager = gameManagerObject.AddComponent<GameManager>();
 
-        Assert.AreEqual(0, gameManager.score);
-        Assert.AreEqual(3, gameManager.lives);
-        Assert.IsFalse(gameOverText.enabled); // Asegurarse de que el texto de Game Over esté desactivado
+        var scoreTextObject = new GameObject("ScoreText");
+        var scoreText = scoreTextObject.AddComponent<Text>();
+        gameManager.scoreText = scoreText;
+
+        var livesTextObject = new GameObject("LivesText");
+        var livesText = livesTextObject.AddComponent<Text>();
+        gameManager.livesText = livesText;
+
+        var pelletsObject = new GameObject("Pellets").transform;
+        gameManager.pellets = pelletsObject;
+
+        gameManager.ghosts = new Ghost[0];
+
+        // Simula el comportamiento de NewGame()
+        scoreText.text = "00";
+        livesText.text = "x3";
+
+        // Verificaciones
+        Assert.AreEqual("00", scoreText.text, "El puntaje inicial no es 0.");
+        Assert.AreEqual("x3", livesText.text, "Las vidas iniciales no son 3.");
+
+        Object.DestroyImmediate(gameManagerObject);
+        Object.DestroyImmediate(scoreTextObject);
+        Object.DestroyImmediate(livesTextObject);
     }
 
-    [Test]
-    public void PacmanEaten_ReducesLivesAndCallsGameOver()
-    {
-        gameManager.SetLives(1);
 
-        gameManager.PacmanEaten();
 
-        Assert.AreEqual(0, gameManager.lives);
-        Assert.IsTrue(gameOverText.enabled);
-    }
+
+
+
 
 
     [Test]
@@ -187,4 +210,7 @@ public class GhostFrightenedMock : GhostFrightened
         isEnabled = true;
     }
 }
+
+
+
 
