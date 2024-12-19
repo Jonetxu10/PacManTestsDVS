@@ -38,7 +38,6 @@ public class Pacman : MonoBehaviour
 
     public void ResetState()
     {
-        Debug.Log("Executing ResetState");
         enabled = true;
         spriteRenderer.enabled = true;
         collider.enabled = true;
@@ -46,12 +45,10 @@ public class Pacman : MonoBehaviour
         deathSequence.spriteRenderer.enabled = false;
         movement.ResetState();
         gameObject.SetActive(true);
-        Debug.Log($"ResetState: spriteRenderer.enabled = {spriteRenderer.enabled}, deathSequence.spriteRenderer.enabled = {deathSequence.spriteRenderer.enabled}");
     }
 
     public void DeathSequence()
     {
-        Debug.Log("Executing DeathSequence");
         enabled = false;
         spriteRenderer.enabled = false;
         collider.enabled = false;
@@ -59,7 +56,6 @@ public class Pacman : MonoBehaviour
         deathSequence.enabled = true;
         deathSequence.spriteRenderer.enabled = true;
         deathSequence.Restart();
-        Debug.Log($"DeathSequence: spriteRenderer.enabled = {spriteRenderer.enabled}, deathSequence.spriteRenderer.enabled = {deathSequence.spriteRenderer.enabled}");
     }
 
 }
