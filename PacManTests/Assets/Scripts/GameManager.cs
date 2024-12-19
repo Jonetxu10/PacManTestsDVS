@@ -30,7 +30,7 @@ namespace PacManGame
             }
         }
 
-        private void NewGame()
+        public void NewGame()
         {
             SetScore(0);
             SetLives(3);
@@ -71,7 +71,7 @@ namespace PacManGame
             pacman.gameObject.SetActive(false);
         }
 
-        private void SetLives(int lives)
+        public void SetLives(int lives)
         {
             this.lives = lives;
             livesText.text = "x" + lives.ToString();
