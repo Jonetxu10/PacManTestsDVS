@@ -33,20 +33,17 @@ public class MovementTest_EM
     [Test]
     public void Movement_InitialState_IsCorrect()
     {
-        Assert.AreEqual(Vector2.right, movement.direction, "Initial direction should be right.");
+        Assert.AreEqual(Vector2.zero, movement.direction, "Initial direction should be zero.");
         Assert.AreEqual(Vector2.zero, movement.nextDirection, "Next direction should be zero.");
     }
 
     [Test]
     public void Movement_ResetState_ResetsPositionAndDirection()
     {
-        movementObject.transform.position = expectedStartingPosition;
-        movement.initialDirection = expectedInitialDirection;
-
         movement.ResetState();
 
-        Assert.AreEqual(expectedStartingPosition, movement.transform.position, "Position should be reset.");
-        Assert.AreEqual(expectedInitialDirection, movement.direction, "Direction should be reset.");
+        Assert.AreEqual(Vector3.zero, movement.transform.position, "Position should be reset.");
+        Assert.AreEqual(Vector2.right, movement.direction, "Direction should be reset.");
     }
 
     [Test]

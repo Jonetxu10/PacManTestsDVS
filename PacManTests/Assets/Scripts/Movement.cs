@@ -5,18 +5,18 @@ public class Movement : MonoBehaviour
 {
     public float speed = 8f;
     public float speedMultiplier = 1f;
-    public Vector2 initialDirection = Vector2.right;
+    public Vector2 initialDirection;
     public LayerMask obstacleLayer;
 
     public new Rigidbody2D rigidbody { get; private set; }
-    public Vector2 direction { get; private set; } = Vector2.right;
+    public Vector2 direction { get; private set; }
     public Vector2 nextDirection { get; private set; }
-    public Vector3 startingPosition { get; private set; } = new Vector3(0f, -9.5f, -5f);
+    public Vector3 startingPosition { get; private set; }
 
     public void Awake()
     {
         rigidbody = GetComponent<Rigidbody2D>();
-        startingPosition = new Vector3(0f, -9.5f, -5f);
+        startingPosition = transform.position;
     }
 
     private void Start()
@@ -26,19 +26,24 @@ public class Movement : MonoBehaviour
 
     public void ResetState()
     {
+        Debug.Log("Movement ResetState started");
+
         speedMultiplier = 1f;
         direction = initialDirection;
         nextDirection = Vector2.zero;
         transform.position = startingPosition;
         rigidbody.isKinematic = false;
         enabled = true;
+
+        Debug.Log($"Movement ResetState completed: position={transform.position}, direction={direction}, isKinematic={rigidbody.isKinematic}");
     }
 
     private void Update()
     {
         // Try to move in the next direction while it's queued to make movements
         // more responsive
-        if (nextDirection != Vector2.zero) {
+        if (nextDirection != Vector2.zero)
+        {
             SetDirection(nextDirection);
         }
     }

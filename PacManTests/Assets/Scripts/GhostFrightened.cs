@@ -14,13 +14,14 @@ namespace PacManGame
         public override void Enable(float duration)
         {
             base.Enable(duration);
-
+            Debug.Log("llego aquí 1");
             body.enabled = false;
             eyes.enabled = false;
             blue.enabled = true;
             white.enabled = false;
-
+            Debug.Log("llego aquí 2");
             Invoke(nameof(Flash), duration / 2f);
+            Debug.Log("llego aquí 3");
         }
 
         public override void Disable()
