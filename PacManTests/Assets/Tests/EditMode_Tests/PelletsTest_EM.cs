@@ -7,31 +7,28 @@ using PacManGame;
 
 public class PelletsTest_EM
 {
+
+
+    ///PowerPellets
     [Test]
         public void PowerPellet_DefaultDuration_Is8Seconds()
         {
-            // Arrange
-            var gameObject = new GameObject();
-            gameObject.AddComponent<BoxCollider2D>(); // Añadimos el colisionador necesario 
-            var powerPellet = gameObject.AddComponent<PowerPellet>();
-
-            // Assert
-            Assert.AreEqual(8f, powerPellet.duration);
+        var gameObject = new GameObject();
+        gameObject.AddComponent<BoxCollider2D>(); // Añadimos el colisionador necesario 
+        var powerPellet = gameObject.AddComponent<PowerPellet>();
+        Assert.AreEqual(8f, powerPellet.duration);
         }
+    
 
-        [Test]
+
+    ///Pellets
+    [Test]
         public void Pellet_DefaultPoints_Is10()
         {
-            // Arrange
-            var gameObject = new GameObject();
-            gameObject.AddComponent<BoxCollider2D>(); // Añadimos el colisionador necesario
-            var pellet = gameObject.AddComponent<PacManGame.Pellet>();
-
-            // Act
-            var points = pellet.points;
-
-            // Assert
-            Assert.AreEqual(10, points);
+        var gameObject2 = new GameObject();
+        gameObject2.AddComponent<BoxCollider2D>(); // Añadimos el colisionador necesario
+        var pellet = gameObject2.AddComponent<PacManGame.Pellet>();
+        Assert.AreEqual(10, pellet.points);
         }
 
 }
