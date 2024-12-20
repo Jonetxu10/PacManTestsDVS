@@ -152,12 +152,6 @@ public class GameManagerTest_EM
     }
 
 
-
-
-
-
-
-
     [Test]
     public void GhostEaten_IncreasesScoreAndMultiplier()
     {
