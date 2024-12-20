@@ -37,7 +37,7 @@ namespace PacManGame
             NewRound();
         }
 
-        private void NewRound()
+        public void NewRound()
         {
             gameOverText.enabled = false;
 
