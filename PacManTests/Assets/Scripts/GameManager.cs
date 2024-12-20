@@ -77,7 +77,7 @@ namespace PacManGame
             livesText.text = "x" + lives.ToString();
         }
 
-        private void SetScore(int score)
+        public void SetScore(int score)
         {
             this.score = score;
             scoreText.text = score.ToString().PadLeft(2, '0');
