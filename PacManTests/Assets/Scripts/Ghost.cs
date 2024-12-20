@@ -24,7 +24,7 @@ namespace PacManGame
             frightened = GetComponent<GhostFrightened>();
         }
 
-        private void Start()
+        public void Start()
         {
             ResetState();
         }

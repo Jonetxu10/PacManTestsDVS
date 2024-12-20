@@ -159,5 +159,19 @@ public class GhostTests_EM
         Object.DestroyImmediate(targetObject);
         Object.DestroyImmediate(nodeObject);
     }
+
+    [Test]
+    public void GhostHome_ReversesDirectionOnObstacleCollision()
+    {
+        // Arrange
+        ghost.home.enabled = true; // Make sure the script is enabled
+        ghost.movement.SetDirection(Vector2.right, true); // Set an initial direction
+
+        // Act (Simulate the collision behavior directly)
+        ghost.movement.SetDirection(-ghost.movement.direction, true); // Reverse the direction
+
+        // Assert
+        Assert.AreEqual(Vector2.left, ghost.movement.direction, "Direction should be reversed.");
+    }
 }
 

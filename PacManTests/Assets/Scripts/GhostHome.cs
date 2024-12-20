@@ -32,7 +32,7 @@ namespace PacManGame
             }
         }
 
-        private IEnumerator ExitTransition()
+        public IEnumerator ExitTransition()
         {
             // Turn off movement while we manually animate the position
             ghost.movement.SetDirection(Vector2.up, true);
