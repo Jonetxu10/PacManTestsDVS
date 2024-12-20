@@ -6,18 +6,18 @@ using UnityEngine.TestTools;
 
 public class PacmanTest_EM
 {
-    private GameObject pacmanObject;
+    private GameObject pacmanGameObject;
     private Pacman pacman;
 
     [SetUp]
     public void SetUp()
     {
-        pacmanObject = new GameObject();
-        pacmanObject.AddComponent<SpriteRenderer>();
-        pacmanObject.AddComponent<BoxCollider2D>();
-        pacmanObject.AddComponent<Rigidbody2D>();
-        pacmanObject.AddComponent<Movement>();
-        pacman = pacmanObject.AddComponent<Pacman>();
+        pacmanGameObject = new GameObject();
+        pacmanGameObject.AddComponent<SpriteRenderer>();
+        pacmanGameObject.AddComponent<BoxCollider2D>();
+        pacmanGameObject.AddComponent<Rigidbody2D>();
+        pacmanGameObject.AddComponent<Movement>();
+        pacman = pacmanGameObject.AddComponent<Pacman>();
 
         pacman.Awake();
     }
@@ -25,7 +25,7 @@ public class PacmanTest_EM
     [TearDown]
     public void TearDown()
     {
-        Object.DestroyImmediate(pacmanObject);
+        Object.DestroyImmediate(pacmanGameObject);
     }
 
     [Test]
