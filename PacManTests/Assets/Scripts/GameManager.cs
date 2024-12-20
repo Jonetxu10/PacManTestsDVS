@@ -109,8 +109,6 @@ namespace PacManGame
 
         public void PelletEaten(Pellet pellet)
         {
-            Debug.Log("PelletEaten llamado para: " + pellet.gameObject.name);
-            Debug.Log("Pellet Eaten"); // Asegúrate de que este log se registre
             pellet.gameObject.SetActive(false);
 
             SetScore(score + pellet.points);
@@ -130,7 +128,6 @@ namespace PacManGame
             }
 
             PelletEaten(pellet);
-            Debug.Log("PowerPellet Eaten"); // Asegúrate de que este log se registre
             CancelInvoke(nameof(ResetGhostMultiplier));
             Invoke(nameof(ResetGhostMultiplier), pellet.duration);
         }

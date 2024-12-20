@@ -6,7 +6,21 @@ using UnityEngine.TestTools;
 using UnityEngine.UI;
 using System.Reflection;
 using PacManGame;
+using UnityEngine.SocialPlatforms.Impl;
 
+/* NOMBRE CLASE: GameManagerTest_EM
+ * AUTOR: Diego Hidalgo Delgado
+ * FECHA: 19/12/2024
+ * VERSIÓN: 1.0 script base comprueba inicializaciones y cambios en los valores
+ *              1.1 NewGame
+ *              1.2 GhostEaten y correcciones
+ * DESCRIPCIÓN: Clase que se encarga de testear todo lo relacionado con el GameManager en Edit Mode
+ *                  - ghostMultiplier, score y lives se inicializan correctamente
+ *                  - Comprueba que comer un pellet da los puntos y lo desactiva
+ *                  - SetLives y SetScore actualizan valores y texto
+ *                  - NewGame se inicializa correctamente
+ *                  - Ghost eaten aumenta el score y el ghostMultiplier
+ */
 public class GameManagerTest_EM
 {
     private GameManager gameManager;
@@ -57,92 +71,93 @@ public class GameManagerTest_EM
         Object.DestroyImmediate(gameOverTextObject);
     }
 
+
     [Test]
-    public void PelletEaten_IncreasesScoreAndDisablesPellet()
+    public void GhostMultiplierIsInitializedCorrectly()
+    {
+        var gameObject = new GameObject();
+        var gameManager = gameObject.AddComponent<GameManager>();
+
+        Assert.AreEqual(1, gameManager.ghostMultiplier, "ghostMultiplier no se ha inicializado correctamente.");
+
+        Object.DestroyImmediate(gameObject);
+    }
+
+    [Test]
+    public void ScoreIsInitializedCorrectly()
+    {
+        var gameObject = new GameObject();
+        var gameManager = gameObject.AddComponent<GameManager>();
+
+        Assert.AreEqual(0, gameManager.score, "score no se ha inicializado correctamente.");
+
+        Object.DestroyImmediate(gameObject);
+    }
+
+    [Test]
+    public void LivesIsInitializedCorrectly()
+    {
+        var gameObject = new GameObject();
+        var gameManager = gameObject.AddComponent<GameManager>();
+
+        Assert.AreEqual(0, gameManager.lives, "lives no se ha inicializado correctamente.");
+
+        Object.DestroyImmediate(gameObject);
+    }
+
+    [Test]
+    public void PelletEatenIncreasesScoreAndDisablesPellet()
     {
         gameManager.PelletEaten(pellet);
 
-        Assert.AreEqual(10, gameManager.score);
-        Assert.IsFalse(pellet.gameObject.activeSelf);
+        Assert.AreEqual(10, gameManager.score, "Comer el pellet no ha aumentado el score como debería.");
+        Assert.IsFalse(pellet.gameObject.activeSelf, "Después de comer el pellet no se ha desactivado el gameObject.");
     }
 
     [Test]
-    public void GhostMultiplier_IsInitializedCorrectly()
+    public void SetLivesUpdatesLivesAndText()
     {
-        var gameObject = new GameObject();
-        var gameManager = gameObject.AddComponent<GameManager>();
-        Assert.AreEqual(1, gameManager.ghostMultiplier);
-        Object.DestroyImmediate(gameObject);
+        gameManager.SetLives(3);
+
+        Assert.AreEqual(3, gameManager.lives, "Las vidas no se actualizan al llamar a SetLives.");
+        Assert.AreEqual("x3", gameManager.livesText.text, "El texto de vidas no se actualiza al llamar a SetLives.");
     }
 
     [Test]
-    public void Score_IsInitializedCorrectly()
-    {
-        var gameObject = new GameObject();
-        var gameManager = gameObject.AddComponent<GameManager>();
-        Assert.AreEqual(0, gameManager.score);
-        Object.DestroyImmediate(gameObject);
-    }
-
-    [Test]
-    public void Lives_IsInitializedCorrectly()
-    {
-        var gameObject = new GameObject();
-        var gameManager = gameObject.AddComponent<GameManager>();
-        Assert.AreEqual(0, gameManager.lives);
-        Object.DestroyImmediate(gameObject);
-    }
-
-    [Test]
-    public void SetLives_UpdatesLivesAndText()
-    {
-        // Ya no se crea un nuevo GameObject ni GameManager aquí
-        gameManager.SetLives(3); // Se usa la instancia del SetUp
-
-        Assert.AreEqual(3, gameManager.lives);
-        Assert.AreEqual("x3", gameManager.livesText.text);
-    }
-
-    [Test]
-    public void SetScore_UpdatesScoreAndText()
+    public void SetScoreUpdatesScoreAndText()
     {
         var gameObject = new GameObject();
         var gameManager = gameObject.AddComponent<GameManager>();
         gameManager.scoreText = new GameObject().AddComponent<Text>();
 
-        // Usar reflexión para acceder al método privado
         MethodInfo setScoreMethod = typeof(GameManager).GetMethod("SetScore", BindingFlags.NonPublic | BindingFlags.Instance);
         setScoreMethod.Invoke(gameManager, new object[] { 10 });
 
-        Assert.AreEqual(10, gameManager.score);
-        Assert.AreEqual("10", gameManager.scoreText.text);
+        Assert.AreEqual(10, gameManager.score, "El score no se actualiza al llamar a SetScore.");
+        Assert.AreEqual("10", gameManager.scoreText.text, "El texto de score no se actualiza al llamar a SetScore.");
+
         Object.DestroyImmediate(gameObject);
     }
 
     [Test]
-    public void NewGame_InitializesCorrectly()
+    public void NewGameInitializesCorrectly()
     {
         var gameManagerObject = new GameObject("GameManager");
         var gameManager = gameManagerObject.AddComponent<GameManager>();
-
         var scoreTextObject = new GameObject("ScoreText");
         var scoreText = scoreTextObject.AddComponent<Text>();
         gameManager.scoreText = scoreText;
-
         var livesTextObject = new GameObject("LivesText");
         var livesText = livesTextObject.AddComponent<Text>();
         gameManager.livesText = livesText;
-
         var pelletsObject = new GameObject("Pellets").transform;
         gameManager.pellets = pelletsObject;
-
         gameManager.ghosts = new Ghost[0];
 
-        // Simula el comportamiento de NewGame()
         scoreText.text = "00";
         livesText.text = "x3";
 
-        // Verificaciones
+
         Assert.AreEqual("00", scoreText.text, "El puntaje inicial no es 0.");
         Assert.AreEqual("x3", livesText.text, "Las vidas iniciales no son 3.");
 
@@ -153,7 +168,7 @@ public class GameManagerTest_EM
 
 
     [Test]
-    public void GhostEaten_IncreasesScoreAndMultiplier()
+    public void GhostEatenIncreasesScoreAndMultiplier()
     {
         var gameObject = new GameObject();
         var gameManager = gameObject.AddComponent<GameManager>();
@@ -163,47 +178,14 @@ public class GameManagerTest_EM
 
         gameManager.GhostEaten(ghost);
 
-        Assert.AreEqual(200, gameManager.score);
-        Assert.AreEqual(2, gameManager.ghostMultiplier);
+        Assert.AreEqual(200, gameManager.score, "GhostEaten no aumenta el score.");
+        Assert.AreEqual(2, gameManager.ghostMultiplier, "GhostEaten no aumenta el ghostMultiplier.");
         Object.DestroyImmediate(gameObject);
+
     }
-
-
 
 }
 
-// Mock de Ghost para permitir la asignación de Frightened
-public class GhostMock : Ghost
-{
-    public GhostFrightenedMock FrightenedMock;
-
-    // Inicializar en Awake
-    public new void Awake()
-    {
-        FrightenedMock = gameObject.AddComponent<GhostFrightenedMock>();
-    }
-
-    public GhostFrightenedMock GetFrightenedMock()
-    {
-        return FrightenedMock;
-    }
-}
-
-public class GhostFrightenedMock : GhostFrightened
-{
-    public bool isEnabled;
-
-    // Constructor vacío
-    public GhostFrightenedMock()
-    {
-        // Lógica de inicialización
-    }
-
-    public override void Enable(float duration)
-    {
-        isEnabled = true;
-    }
-}
 
 
 

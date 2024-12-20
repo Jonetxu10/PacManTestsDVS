@@ -5,31 +5,36 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using PacManGame;
 
+/* NOMBRE CLASE: PelletsTest_EM
+ * AUTOR: Diego Hidalgo Delgado
+ * FECHA: 18/12/2024
+ * VERSIÓN: 1.0 tests y todo lo necesario para que funcionen
+ * DESCRIPCIÓN: Comprueba que los Pellets funcionen correctamente
+ *                  - Duración de PowerPellet tiene que ser 8 segundos
+ *                  - Puntos de Pellet tiene que ser 10
+ */
 public class PelletsTest_EM
 {
 
-
-    ///PowerPellets
     [Test]
-        public void PowerPellet_DefaultDuration_Is8Seconds()
-        {
+    public void PowerPelletDefaultDurationIs8Seconds()
+    {
         var gameObject = new GameObject();
-        gameObject.AddComponent<BoxCollider2D>(); // Añadimos el colisionador necesario 
+        gameObject.AddComponent<BoxCollider2D>();
         var powerPellet = gameObject.AddComponent<PowerPellet>();
-        Assert.AreEqual(8f, powerPellet.duration);
-        }
+
+        Assert.AreEqual(8f, powerPellet.duration, "La duración por defecto de PowerPellet no es de 8 segundos.");
+    }
     
-
-
-    ///Pellets
     [Test]
-        public void Pellet_DefaultPoints_Is10()
-        {
+    public void PelletDefaultPointsIs10()
+    {
         var gameObject2 = new GameObject();
-        gameObject2.AddComponent<BoxCollider2D>(); // Añadimos el colisionador necesario
+        gameObject2.AddComponent<BoxCollider2D>();
         var pellet = gameObject2.AddComponent<PacManGame.Pellet>();
-        Assert.AreEqual(10, pellet.points);
-        }
+
+        Assert.AreEqual(10, pellet.points, "Los puntos por defecto de Pellet no son 10.");
+    }
 
 }
 

@@ -4,6 +4,12 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
+/* NOMBRE CLASE: PacmanTest_EM
+ * AUTOR: Jone Sainz Egea
+ * FECHA: 17/12/2024
+ * VERSIÓN: 1.0 tests y todo lo necesario para que funcione
+ * DESCRIPCIÓN: Comprueba que Pacman se inicializa correctamente y que cambia la dirección de movimiento al recibir input
+ */
 public class PacmanTest_EM
 {
     private GameObject pacmanGameObject;
@@ -29,27 +35,27 @@ public class PacmanTest_EM
     }
 
     [Test]
-    public void Pacman_InitializesComponents()
+    public void PacmanInitializesComponents()
     {
-        Assert.IsNotNull(pacman.spriteRenderer, "SpriteRenderer should be initialized.");
-        Assert.IsNotNull(pacman.collider, "Collider2D should be initialized.");
-        Assert.IsNotNull(pacman.movement, "Movement should be initialized.");
+        Assert.IsNotNull(pacman.spriteRenderer, "SpriteRenderer no se ha inicializado.");
+        Assert.IsNotNull(pacman.collider, "Collider2D no se ha inicializado.");
+        Assert.IsNotNull(pacman.movement, "Movement no se ha inicializado.");
     }
 
     [Test]
-    public void Pacman_ChangesDirection_OnInput()
+    public void PacmanChangesDirection_OnInput()
     {
         pacman.movement.SetDirection(Vector2.up);
-        Assert.AreEqual(Vector2.up, pacman.movement.direction, "Pacman should move up.");
+        Assert.AreEqual(Vector2.up, pacman.movement.direction, "Pacman no se mueve hacia arriba.");
 
         pacman.movement.SetDirection(Vector2.down);
-        Assert.AreEqual(Vector2.down, pacman.movement.direction, "Pacman should move down.");
+        Assert.AreEqual(Vector2.down, pacman.movement.direction, "Pacman no se mueve hacia abajo.");
 
         pacman.movement.SetDirection(Vector2.left);
-        Assert.AreEqual(Vector2.left, pacman.movement.direction, "Pacman should move left.");
+        Assert.AreEqual(Vector2.left, pacman.movement.direction, "Pacman no se mueve hacia la izquierda.");
 
         pacman.movement.SetDirection(Vector2.right);
-        Assert.AreEqual(Vector2.right, pacman.movement.direction, "Pacman should move right.");
+        Assert.AreEqual(Vector2.right, pacman.movement.direction, "Pacman no se mueve hacia la derecha.");
     }
 }
 

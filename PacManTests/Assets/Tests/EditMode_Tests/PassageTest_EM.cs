@@ -4,6 +4,12 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
+/* NOMBRE CLASE: PassageTest_EM
+ * AUTOR: Diego Hidalgo Delgado
+ * FECHA: 18/12/2024
+ * VERSIÓN: 1.0 test y todo lo necesario para que funcione
+ * DESCRIPCIÓN: Comprueba que el Passage funcione correctamente, que esté asignado y mueva al objeto de un lado a otro
+ */
 public class PassageTest_EM
 {
     private GameObject passageGameObject;
@@ -14,56 +20,50 @@ public class PassageTest_EM
     [SetUp]
     public void Setup()
     {
-        // Crear el objeto Passage y agregar el colisionador antes del componente Passage
         passageGameObject = new GameObject();
-        passageGameObject.AddComponent<BoxCollider2D>(); // Agregar el colisionador primero
+        passageGameObject.AddComponent<BoxCollider2D>();
         passage = passageGameObject.AddComponent<Passage>();
 
-        // Crear el objeto de conexión y asignarlo
         var connectionGameObject = new GameObject();
         connection = connectionGameObject.transform;
         connection.position = new Vector3(5, 5, 0);
         passage.connection = connection;
 
-        // Crear el otro objeto que colisionará
         otherGameObject = new GameObject();
         otherGameObject.AddComponent<BoxCollider2D>();
     }
 
     [Test]
-    public void Connection_IsAssigned()
+    public void ConnectionIsAssigned()
     {
-        Assert.IsNotNull(passage.connection);
+        Assert.IsNotNull(passage.connection, "La conexión no se ha asignado debidamente.");
     }
 
     [Test]
-    public void OnTriggerEnter2D_MovesObjectToConnectionPosition()
+    public void OnTriggerEnter2DMovesObjectToConnectionPosition()
     {
-        // Configurar la posición inicial del otro objeto
         otherGameObject.transform.position = new Vector3(0, 0, 1);
 
-        // Simular la colisión usando un script auxiliar
         SimulateTriggerEnter2D(passage, otherGameObject);
 
-        // Verificar que la posición del otro objeto sea igual a la posición de la conexión
         Vector3 expectedPosition = connection.position;
-        expectedPosition.z = otherGameObject.transform.position.z; // Asegurarse de que la posición Z se mantiene
+        expectedPosition.z = otherGameObject.transform.position.z;
 
-        Assert.AreEqual(expectedPosition, otherGameObject.transform.position);
+        Assert.AreEqual(expectedPosition, otherGameObject.transform.position, "El Passage no mueve al objeto a la posición que debe");
     }
 
+    /* NOMBRE MÉTODO: SimulateTriggerEnter2D
+     * AUTOR: Diego Hidalgo Delgado
+     * FECHA: 18/12/2024
+     * DESCRIPCIÓN: Simula la entrada en el trigger para comprobar que funciona
+     * @param: Passage passage
+     *         GameObject other
+     * @return: -
+     */
     private void SimulateTriggerEnter2D(Passage passage, GameObject other)
     {
-        // Usar reflexión para llamar al método OnTriggerEnter2D
         var method = typeof(Passage).GetMethod("OnTriggerEnter2D", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         method.Invoke(passage, new object[] { other.GetComponent<Collider2D>() });
     }
-
-
-
-
-  
-
-
 
 }

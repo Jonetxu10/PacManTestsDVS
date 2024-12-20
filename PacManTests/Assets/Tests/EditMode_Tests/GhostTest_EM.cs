@@ -15,7 +15,9 @@ using UnityEngine.XR;
  * DESCRIPCIÓN: Clase que se encarga de testear todo lo relacionado con los Ghost en Edit Mode
  *                  - Comprueba que se inicializan los componentes de Ghost
  *                  - El cambio de posición funciona correctamente
- *                  - 
+ *                  - Al estar persiguiendo al objetivo busca la dirección más óptima para llegar a él
+ *                  - Al estar huyendo de pacman busca ir en la dirección contraria de su posición
+ *                  - Cambio de direcciones estando en ghostHome
  */
 public class GhostTest_EM
 {
@@ -114,7 +116,7 @@ public class GhostTest_EM
             }
         }
 
-        Assert.AreEqual(expectedDirection, ghost.movement.direction, "Ghost should move upwards towards the target.");
+        Assert.AreEqual(expectedDirection, ghost.movement.direction, "Ghost no se mueve hacia arriba, hacia el objetivo.");
 
         Object.DestroyImmediate(ghostObject);
         Object.DestroyImmediate(targetObject);
@@ -124,13 +126,10 @@ public class GhostTest_EM
     [Test]
     public void GhostFrightenedChangesDirectionBasedOnNode()
     {
-        // Create the target
         GameObject targetObject = new GameObject();
-        targetObject.transform.position = new Vector3(10f, 0f, 0f); // Target to the right
-
+        targetObject.transform.position = new Vector3(10f, 0f, 0f);
         ghost.target = targetObject.transform;
 
-        // Create the node
         GameObject nodeObject = new GameObject();
         Node node = nodeObject.AddComponent<Node>();
         nodeObject.AddComponent<BoxCollider2D>();
@@ -138,15 +137,10 @@ public class GhostTest_EM
         node.availableDirections.Add(Vector2.up);
         node.availableDirections.Add(Vector2.down);
         node.availableDirections.Add(Vector2.left);
-
-        // Position the node relative to the ghost
-        nodeObject.transform.position = ghostGameObject.transform.position + Vector3.up; // Node above the ghost
-
-        // Set the ghost's initial position
+        nodeObject.transform.position = ghostGameObject.transform.position + Vector3.up;
         ghostGameObject.transform.position = Vector3.zero;
-        ghost.movement.SetDirection(Vector2.down); // Initial direction
+        ghost.movement.SetDirection(Vector2.down);
 
-        // Simulate Frightened Behavior DIRECTLY
         Vector2 expectedDirection = Vector2.zero;
         float maxDistance = float.MinValue;
 
@@ -163,21 +157,21 @@ public class GhostTest_EM
         }
         ghost.movement.SetDirection(expectedDirection, true);
 
-        Assert.AreEqual(Vector2.left, ghost.movement.direction, "Ghost should move left away from the target.");
+        Assert.AreEqual(Vector2.left, ghost.movement.direction, "Ghost no se mueve hacia la izquierda alejándose de pacman.");
 
         Object.DestroyImmediate(targetObject);
         Object.DestroyImmediate(nodeObject);
     }
 
     [Test]
-    public void GhostHome_ReversesDirectionOnObstacleCollision()
+    public void GhostHomeReversesDirectionOnObstacleCollision()
     {
         ghost.home.enabled = true;
         ghost.movement.SetDirection(Vector2.right, true);
 
         ghost.movement.SetDirection(-ghost.movement.direction, true);
 
-        Assert.AreEqual(Vector2.left, ghost.movement.direction, "Direction should be reversed.");
+        Assert.AreEqual(Vector2.left, ghost.movement.direction, "La dirección no se ha revertido.");
     }
 }
 
