@@ -4,27 +4,31 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
+/* NOMBRE CLASE: CheckpointTest_PM
+ * AUTOR: Jone Sainz Egea
+ * FECHA: 19/12/2024
+ * VERSIÓN: 1.0 programa base con la funcionalidad completa
+ * DESCRIPCIÓN: Clase que se encarga de testear todo lo relacionado con los Checkpoints
+ *                  - Comprueba que el checkpoint se crea
+ *                  - Comprueba que el checkpoint se activa
+ *                  - Comprueba que el jugador aparece en el checkpoint activo al morir
+ */
 public class CheckpointTest_PM
 {
-    private GameObject pacman;
-    private GameObject ghost;
-    private GameObject cp;
+    private GameObject pacmanGameObject;
+    private GameObject ghostGameObject;
+    private GameObject cpGameObject;
     private CheckPoint newCheckPoint;
 
     [SetUp]
     public void Setup()
     {
-        // Instanciar prefabs requeridos
-        pacman = MonoBehaviour.Instantiate(Resources.Load<GameObject>("Prefabs/Pacman"), new Vector3(0, 0, 0), Quaternion.identity);
-        ghost = MonoBehaviour.Instantiate(Resources.Load<GameObject>("Prefabs/Ghost_Base"), new Vector3(20, 0, 0), Quaternion.identity);
+        pacmanGameObject = MonoBehaviour.Instantiate(Resources.Load<GameObject>("Prefabs/Pacman"), new Vector3(0, 0, 0), Quaternion.identity);
+        ghostGameObject = MonoBehaviour.Instantiate(Resources.Load<GameObject>("Prefabs/Ghost_Base"), new Vector3(20, 0, 0), Quaternion.identity);
 
-        // Instanciar checkpoint y verificar su componente
-        cp = MonoBehaviour.Instantiate(Resources.Load<GameObject>("Prefabs/Checkpoint"), new Vector3(50, 0, 0), Quaternion.identity);
-        Assert.IsNotNull(cp, "No se pudo cargar el prefab Checkpoint.");
-        newCheckPoint = cp.GetComponent<CheckPoint>();
-        Assert.IsNotNull(newCheckPoint, "El objeto Checkpoint no tiene el componente CheckPoint.");
+        cpGameObject = MonoBehaviour.Instantiate(Resources.Load<GameObject>("Prefabs/Checkpoint"), new Vector3(50, 0, 0), Quaternion.identity);
+        newCheckPoint = cpGameObject.GetComponent<CheckPoint>();
 
-        // Inicializar lista de checkpoints si es necesario
         if (CheckPoint.CheckPointsList == null)
         {
             CheckPoint.CheckPointsList = new List<GameObject>();
@@ -34,54 +38,43 @@ public class CheckpointTest_PM
     [TearDown]
     public void TearDown()
     {
-        GameObject.Destroy(pacman);
-        GameObject.Destroy(ghost);
-        GameObject.Destroy(cp);
+        GameObject.Destroy(pacmanGameObject);
+        GameObject.Destroy(ghostGameObject);
+        GameObject.Destroy(cpGameObject);
 
-        // Limpiar lista de checkpoints
         CheckPoint.CheckPointsList.Clear();
     }
 
     [UnityTest]
     public IEnumerator CheckPointIsCreated()
     {
-        // Verificar que se haya agregado un checkpoint a la lista
-        yield return null; // Esperar un frame para inicialización
-        Assert.AreEqual(1, CheckPoint.CheckPointsList.Count, "Solo 1 CheckPoint debería estar creado.");
-        Assert.IsFalse(newCheckPoint.Activated, "Checkpoint no debería estar activo al inicio.");
+        yield return null;
+        Assert.AreEqual(1, CheckPoint.CheckPointsList.Count, "Se ha creado más de un checkpoint.");
+        Assert.IsFalse(newCheckPoint.Activated, "Checkpoint está activo al inicio.");
     }
 
     [UnityTest]
     public IEnumerator CheckPointIsActivated()
     {
-        // Mover Pacman al checkpoint
-        pacman.transform.position = cp.transform.position;
-
-        // Esperar un frame para procesar la colisión
+        pacmanGameObject.transform.position = cpGameObject.transform.position;
         yield return new WaitForSeconds(0.1f);
 
-        // Validar activación del checkpoint
-        Assert.IsTrue(newCheckPoint.Activated, "Checkpoint debería estar activo después de que Pacman pase por él.");
-        Assert.AreEqual(Color.green, newCheckPoint.GetComponent<SpriteRenderer>().color, "El color del checkpoint debería ser verde después de activarse.");
+        Assert.IsTrue(newCheckPoint.Activated, "Checkpoint no está activo después de que Pacman pase por él.");
+        Assert.AreEqual(Color.green, newCheckPoint.GetComponent<SpriteRenderer>().color, "El color del checkpoint no es verde después de activarse.");
     }
 
     [UnityTest]
     public IEnumerator PlayerAppearsInCheckPointActivated()
     {
-        // Activar un checkpoint
-        pacman.transform.position = new Vector3(50, 0, 0); // Simular que Pacman pasa por el checkpoint
-        yield return new WaitForSeconds(0.1f); // Esperar que el evento de activación se procese
-
-        Assert.IsTrue(newCheckPoint.Activated, "Checkpoint debería estar activo después de que Pacman pase por él."); // Verificar que se activa
-
-        // Llamar a ResetState y verificar que Pacman reaparece en el checkpoint
-        pacman.GetComponent<Pacman>().ResetState(); // Llamar a ResetState
-        yield return null; // Esperar al siguiente frame
-
-        Vector3 pacmanPosition = pacman.transform.position;
+        pacmanGameObject.transform.position = cpGameObject.transform.position;
+        yield return new WaitForSeconds(0.1f);
+        Assert.IsTrue(newCheckPoint.Activated, "Checkpoint no está activo después de que Pacman pase por él.");
+        
+        pacmanGameObject.GetComponent<Pacman>().ResetState(); 
+        yield return null; 
+        Vector3 pacmanPosition = pacmanGameObject.transform.position;
         Vector3 checkpointPosition = newCheckPoint.transform.position;
 
-        // Verificar que Pacman reaparece exactamente en el checkpoint activo
-        Assert.AreEqual(checkpointPosition, pacmanPosition, "Pacman debería reaparecer en la posición del checkpoint activo.");
+        Assert.AreEqual(checkpointPosition, pacmanPosition, "Pacman no reaparece en la posición del checkpoint activo.");
     }
 }

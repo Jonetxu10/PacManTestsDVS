@@ -6,26 +6,36 @@ using UnityEngine.TestTools;
 using PacManGame;
 using UnityEngine.XR;
 
+/* NOMBRE CLASE: GhostTest_EM
+ * AUTOR: Jone Sainz Egea
+ * FECHA: 17/12/2024
+ * VERSIÓN: 1.0 inicialización de componentes y posición
+ *              1.1. cambios de dirección con nodos
+ *              1.2. funcionamiento ghostHome
+ * DESCRIPCIÓN: Clase que se encarga de testear todo lo relacionado con los Ghost en Edit Mode
+ *                  - Comprueba que se inicializan los componentes de Ghost
+ *                  - El cambio de posición funciona correctamente
+ *                  - 
+ */
 public class GhostTest_EM
 {
-    private GameObject ghostObject;
+    private GameObject ghostGameObject;
     private Ghost ghost;
 
     [SetUp]
     public void SetUp()
     {
-        ghostObject = new GameObject();
-        ghostObject.AddComponent<SpriteRenderer>();
-        ghostObject.AddComponent<BoxCollider2D>();
-        var rb = ghostObject.AddComponent<Rigidbody2D>();
+        ghostGameObject = new GameObject();
+        ghostGameObject.AddComponent<SpriteRenderer>();
+        ghostGameObject.AddComponent<BoxCollider2D>();
+        var rb = ghostGameObject.AddComponent<Rigidbody2D>();
         rb.isKinematic = true;
-        ghostObject.AddComponent<Movement>();
-        ghostObject.AddComponent<GhostHome>();
-        ghostObject.AddComponent<GhostScatter>();
-        ghostObject.AddComponent<GhostChase>();
-        ghostObject.AddComponent<GhostFrightened>();
-        ghost = ghostObject.AddComponent<Ghost>();
-
+        ghostGameObject.AddComponent<Movement>();
+        ghostGameObject.AddComponent<GhostHome>();
+        ghostGameObject.AddComponent<GhostScatter>();
+        ghostGameObject.AddComponent<GhostChase>();
+        ghostGameObject.AddComponent<GhostFrightened>();
+        ghost = ghostGameObject.AddComponent<Ghost>();
 
         ghost.Awake();
     }
@@ -33,32 +43,31 @@ public class GhostTest_EM
     [TearDown]
     public void TearDown()
     {
-        Object.DestroyImmediate(ghostObject);
+        Object.DestroyImmediate(ghostGameObject);
     }
 
     [Test]
-    public void Ghost_InitializesComponents()
+    public void GhostInitializesComponents()
     {
-        Assert.IsNotNull(ghost.movement, "Movement should be initialized.");
-        Assert.IsNotNull(ghost.home, "Home should be initialized.");
-        Assert.IsNotNull(ghost.scatter, "Scatter should be initialized.");
-        Assert.IsNotNull(ghost.chase, "Chase should be initialized.");
-        Assert.IsNotNull(ghost.frightened, "Frightened should be initialized.");
+        Assert.IsNotNull(ghost.movement, "Movement no se ha inicializado.");
+        Assert.IsNotNull(ghost.home, "Home no se ha inicializado.");
+        Assert.IsNotNull(ghost.scatter, "Scatter no se ha inicializado.");
+        Assert.IsNotNull(ghost.chase, "Chase no se ha inicializado.");
+        Assert.IsNotNull(ghost.frightened, "Frightened no se ha inicializado.");
     }
 
     [Test]
-    public void Ghost_SetPosition_SetsCorrectPosition()
+    public void GhostSetPositionSetsCorrectPosition()
     {
         Vector3 newPosition = new Vector3(1f, 2f, 3f);
         ghost.SetPosition(newPosition);
 
-        Assert.AreEqual(new Vector3(1f, 2f, ghost.transform.position.z), ghost.transform.position, "Position should be set correctly.");
+        Assert.AreEqual(new Vector3(1f, 2f, ghost.transform.position.z), ghost.transform.position, "SetPosition no cambia la posición correctamente.");
     }
 
     [Test]
-    public void GhostChase_ChangesDirection_OnNodeEnter()
+    public void GhostChaseChangesDirectionBasedOnNode()
     {
-        // Create necessary GameObjects and components
         GameObject ghostObject = new GameObject();
         Ghost ghost = ghostObject.AddComponent<Ghost>();
         ghostObject.AddComponent<Movement>();
@@ -113,7 +122,7 @@ public class GhostTest_EM
     }
 
     [Test]
-    public void GhostFrightened_ChangesDirection_OnNodeEnter()
+    public void GhostFrightenedChangesDirectionBasedOnNode()
     {
         // Create the target
         GameObject targetObject = new GameObject();
@@ -131,10 +140,10 @@ public class GhostTest_EM
         node.availableDirections.Add(Vector2.left);
 
         // Position the node relative to the ghost
-        nodeObject.transform.position = ghostObject.transform.position + Vector3.up; // Node above the ghost
+        nodeObject.transform.position = ghostGameObject.transform.position + Vector3.up; // Node above the ghost
 
         // Set the ghost's initial position
-        ghostObject.transform.position = Vector3.zero;
+        ghostGameObject.transform.position = Vector3.zero;
         ghost.movement.SetDirection(Vector2.down); // Initial direction
 
         // Simulate Frightened Behavior DIRECTLY
@@ -163,14 +172,11 @@ public class GhostTest_EM
     [Test]
     public void GhostHome_ReversesDirectionOnObstacleCollision()
     {
-        // Arrange
-        ghost.home.enabled = true; // Make sure the script is enabled
-        ghost.movement.SetDirection(Vector2.right, true); // Set an initial direction
+        ghost.home.enabled = true;
+        ghost.movement.SetDirection(Vector2.right, true);
 
-        // Act (Simulate the collision behavior directly)
-        ghost.movement.SetDirection(-ghost.movement.direction, true); // Reverse the direction
+        ghost.movement.SetDirection(-ghost.movement.direction, true);
 
-        // Assert
         Assert.AreEqual(Vector2.left, ghost.movement.direction, "Direction should be reversed.");
     }
 }

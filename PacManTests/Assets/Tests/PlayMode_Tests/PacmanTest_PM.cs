@@ -3,6 +3,14 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using System.Collections;
 
+/* NOMBRE CLASE: PacmanTest_PM
+ * AUTOR: Jone Sainz Egea
+ * FECHA: 18/12/2024
+ * VERSIÓN: 1.0 programa base
+ *              1.1. se añade test de camino bloqueado
+ * DESCRIPCIÓN: Clase que se encarga de testear todo lo relacionado con el movimiento del personaje jugable
+ *                  - Que el personaje se mueva con el input del jugador en la dirección indicada
+ */
 public class PacmanTest_PM
 {
     private GameObject pacmanGameObject;
@@ -12,17 +20,13 @@ public class PacmanTest_PM
     [SetUp]
     public void SetUp()
     {
-        // Configurar los GameObjects necesarios
         pacmanGameObject = new GameObject("Pacman");
         pacmanGameObject.AddComponent<Rigidbody2D>();
         pacmanGameObject.AddComponent<BoxCollider2D>();
         pacmanGameObject.AddComponent<SpriteRenderer>();
-
-        // Añadir los scripts principales
         pacman = pacmanGameObject.AddComponent<Pacman>();
         movement = pacmanGameObject.AddComponent<Movement>();
 
-        // Configurar valores iniciales
         pacman.deathSequence = pacmanGameObject.AddComponent<AnimatedSprite>();
         movement.initialDirection = Vector2.right;
         movement.speed = 8f;
@@ -31,29 +35,58 @@ public class PacmanTest_PM
     [TearDown]
     public void TearDown()
     {
-        // Limpiar los GameObjects creados
         Object.Destroy(pacmanGameObject);
     }
 
     [UnityTest]
-    public IEnumerator Pacman_MovesUp_WhenWKeyIsPressed()
+    public IEnumerator PacmanMovesUpWhenWKeyIsPressed()
     {
-        // Preparar el frame inicial
         yield return null;
-
-        // Simular una pulsación de tecla usando Reflection
         SimulateKeyPress(KeyCode.W);
-
-        // Esperar al siguiente frame
         yield return null;
 
-        // Verificar que Pacman se mueve hacia arriba
-        Assert.AreEqual(Vector2.up, pacman.movement.direction);
+        Assert.AreEqual(Vector2.up, pacman.movement.direction, "Pacman no se mueve hacia arriba al presionar W.");
     }
 
+    [UnityTest]
+    public IEnumerator PacmanMovesRightWhenWKeyIsPressed()
+    {
+        yield return null;
+        SimulateKeyPress(KeyCode.D);
+        yield return null;
+
+        Assert.AreEqual(Vector2.right, pacman.movement.direction, "Pacman no se mueve hacia la derecha al presionar D.");
+    }
+
+    [UnityTest]
+    public IEnumerator PacmanMovesDownWhenWKeyIsPressed()
+    {
+        yield return null;
+        SimulateKeyPress(KeyCode.S);
+        yield return null;
+
+        Assert.AreEqual(Vector2.down, pacman.movement.direction, "Pacman no se mueve hacia abajo al presionar S.");
+    }
+
+    [UnityTest]
+    public IEnumerator PacmanMovesLeftWhenWKeyIsPressed()
+    {
+        yield return null;
+        SimulateKeyPress(KeyCode.A);
+        yield return null;
+
+        Assert.AreEqual(Vector2.left, pacman.movement.direction, "Pacman no se mueve hacia la izquierda al presionar A.");
+    }
+
+    /* NOMBRE MÉTODO: SimulateKeyPress
+     * AUTOR: Jone Sainz Egea
+     * FECHA: 18/12/2024
+     * DESCRIPCIÓN: Simula un update del movimiento del jugador para poder comprobar las respuestas al input en los tests
+     * @param: -
+     * @return: -
+     */
     private void SimulateKeyPress(KeyCode key)
     {
-        // Llama al método `Update` manualmente con la simulación de la entrada
         if (key == KeyCode.W)
         {
             pacman.movement.SetDirection(Vector2.up);
@@ -72,27 +105,31 @@ public class PacmanTest_PM
         }
     }
 
+    /* NOMBRE MÉTODO:  AssertVector3Approximately
+     * AUTOR: Jone Sainz Egea
+     * FECHA: 19/12/2024
+     * DESCRIPCIÓN: Comprueba que la diferencia entre el resultado esperado y el real sea menor a la tolerancia permitida
+     * @param: -
+     * @return: -
+     */
     private void AssertVector3Approximately(Vector3 expected, Vector3 actual, float tolerance = 0.01f)
     {
-        Assert.That(Mathf.Abs(expected.x - actual.x) <= tolerance, $"Expected: {expected.x}, but was: {actual.x}");
-        Assert.That(Mathf.Abs(expected.y - actual.y) <= tolerance, $"Expected: {expected.y}, but was: {actual.y}");
-        Assert.That(Mathf.Abs(expected.z - actual.z) <= tolerance, $"Expected: {expected.z}, but was: {actual.z}");
+        Assert.That(Mathf.Abs(expected.x - actual.x) <= tolerance, $"Se esperaba: {expected.x}, pero fue: {actual.x}");
+        Assert.That(Mathf.Abs(expected.y - actual.y) <= tolerance, $"Se esperaba: {expected.y}, pero fue: {actual.y}");
+        Assert.That(Mathf.Abs(expected.z - actual.z) <= tolerance, $"Se esperaba: {expected.z}, pero fue: {actual.z}");
     }
 
     [UnityTest]
-    public IEnumerator Movement_DoesNotMove_WhenDirectionIsBlocked()
+    public IEnumerator MovementDoesNotMoveWhenDirectionIsBlocked()
     {
-        // Configurar un obstáculo en la dirección inicial
         GameObject obstacle = new GameObject("Obstacle");
         obstacle.AddComponent<BoxCollider2D>().size = new Vector2(1.5f, 1.5f);
         obstacle.transform.position = pacmanGameObject.transform.position + Vector3.right;
-
-        yield return null; // Esperar un frame para que la física registre el obstáculo
+        yield return null; 
 
         movement.SetDirection(Vector2.right);
-        yield return new WaitForFixedUpdate(); // Esperar a la actualización de FixedUpdate
+        yield return new WaitForFixedUpdate();
 
-        // Verifica que no se haya movido (o se haya movido dentro de la tolerancia)
         AssertVector3Approximately(Vector3.zero, pacman.movement.rigidbody.velocity, 0.01f);
 
         Object.Destroy(obstacle);

@@ -7,19 +7,17 @@ using UnityEngine.Tilemaps;
 
 public class MovementTest_EM
 {
-    private GameObject movementObject;
+    private GameObject movementGameObject;
     private Movement movement;
-    Vector3 expectedStartingPosition = new Vector3(0f, -9.5f, -5f);
-    Vector2 expectedInitialDirection = Vector2.right;
 
     [SetUp]
     public void SetUp()
     {
-        movementObject = new GameObject();
-        movementObject.AddComponent<Rigidbody2D>();
-        movementObject.GetComponent<Rigidbody2D>().isKinematic = false;
-        movement = movementObject.AddComponent<Movement>();
-        movement.initialDirection = expectedInitialDirection;
+        movementGameObject = new GameObject();
+        movementGameObject.AddComponent<Rigidbody2D>();
+        movementGameObject.GetComponent<Rigidbody2D>().isKinematic = false;
+        movement = movementGameObject.AddComponent<Movement>();
+        movement.initialDirection = Vector2.right;
 
         movement.Awake();
     }
@@ -27,7 +25,7 @@ public class MovementTest_EM
     [TearDown]
     public void TearDown()
     {
-        Object.DestroyImmediate(movementObject);
+        Object.DestroyImmediate(movementGameObject);
     }
 
     [Test]
@@ -54,7 +52,7 @@ public class MovementTest_EM
         GameObject obstacle = new GameObject();
         obstacle.AddComponent<BoxCollider2D>();
         obstacle.layer = LayerMask.NameToLayer("Obstacle");
-        obstacle.transform.position = movementObject.transform.position + Vector3.up;
+        obstacle.transform.position = movementGameObject.transform.position + Vector3.up;
 
         bool isOccupied = movement.Occupied(Vector2.up);
 
@@ -78,7 +76,7 @@ public class MovementTest_EM
         GameObject obstacle = new GameObject("Obstacle");
         obstacle.AddComponent<BoxCollider2D>();
         obstacle.layer = LayerMask.NameToLayer("Obstacle");
-        obstacle.transform.position = movementObject.transform.position + Vector3.left;
+        obstacle.transform.position = movementGameObject.transform.position + Vector3.left;
 
         movement.enabled = false;
 
@@ -94,7 +92,7 @@ public class MovementTest_EM
         GameObject obstacle = new GameObject();
         obstacle.AddComponent<BoxCollider2D>();
         obstacle.layer = LayerMask.NameToLayer("Obstacle");
-        obstacle.transform.position = movementObject.transform.position + Vector3.left;
+        obstacle.transform.position = movementGameObject.transform.position + Vector3.left;
 
         movement.SetDirection(Vector2.left, forced: true); 
 

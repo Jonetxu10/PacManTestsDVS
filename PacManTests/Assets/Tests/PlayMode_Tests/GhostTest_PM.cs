@@ -5,6 +5,12 @@ using PacManGame;
 using System.Collections;
 using System.Collections.Generic;
 
+/* NOMBRE CLASE: GhostTest_PM
+ * AUTOR: Jone Sainz Egea
+ * FECHA: 19/12/2024
+ * VERSIÓN: 1.0 test y todo lo necesario para que funcione
+ * DESCRIPCIÓN: Comprueba que al resetear el estado de Ghost se activa el comportamiento inicial
+ */
 public class GhostTest_PM
 {
     private GameObject pacmanGameObject;
@@ -21,21 +27,16 @@ public class GhostTest_PM
     }
 
     [UnityTest]
-    public IEnumerator ResetState_ShouldEnableInitialBehavior()
+    public IEnumerator ResetStateEnablesInitialBehavior()
     {
-        // Activa el GameObject para simular el estado en el juego
         ghostGameObject.SetActive(true);
 
-        // Llama al método ResetState
         ghost.ResetState();
-
-        // Espera un frame para permitir la ejecución en Play Mode
         yield return null;
 
-        // Comprueba que los estados iniciales son correctos
-        Assert.IsTrue(ghost.scatter.enabled, "El estado Scatter debería estar habilitado.");
-        Assert.IsFalse(ghost.chase.enabled, "El estado Chase debería estar deshabilitado.");
-        Assert.IsFalse(ghost.frightened.enabled, "El estado Frightened debería estar deshabilitado.");
-        Assert.IsFalse(ghost.home.enabled, "El estado Home debería estar deshabilitado si no es el comportamiento inicial.");
+        Assert.IsTrue(ghost.scatter.enabled, "El estado Scatter no se ha habilitado.");
+        Assert.IsFalse(ghost.chase.enabled, "El estado Chase no se ha deshabilitado.");
+        Assert.IsFalse(ghost.frightened.enabled, "El estado Frightened no se ha deshabilitado.");
+        Assert.IsFalse(ghost.home.enabled, "El estado Home no se ha deshabilitado.");
     }
 }
