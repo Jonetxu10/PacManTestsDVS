@@ -44,6 +44,7 @@ public class Pacman : MonoBehaviour
         deathSequence.enabled = false;
         deathSequence.spriteRenderer.enabled = false;
         movement.ResetState();
+        transform.position = CheckPoint.GetActiveCheckPointPosition();
         gameObject.SetActive(true);
     }
 
