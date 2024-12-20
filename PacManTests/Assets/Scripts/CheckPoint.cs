@@ -12,22 +12,25 @@ public class CheckPoint : MonoBehaviour
 
     void Start()
     {
+        if (CheckPointsList == null)
+        {
+            CheckPointsList = new List<GameObject>();
+        }
+
+        if (!CheckPointsList.Contains(gameObject))
+        {
+            CheckPointsList.Add(gameObject);
+        }
+
         thisSpriteRenderer = GetComponent<SpriteRenderer>();
         thisSpriteRenderer.color = Color.magenta;
-        Debug.Log("Should be magenta");
-        // We search all the checkpoints in the current scene
-        CheckPointsList = GameObject.FindGameObjectsWithTag("CheckPoint").ToList();
-        Debug.Log(CheckPointsList);
     }
 
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("Trigger entered");
-        // If the player passes through the checkpoint, we activate it
-        if (collision.tag == "Player")
+        if (collision.CompareTag("Player"))
         {
-            Debug.Log("Player enters checkpoint");
             ActivateCheckPoint();
         }
     }

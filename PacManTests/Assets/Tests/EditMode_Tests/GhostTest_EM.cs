@@ -6,7 +6,7 @@ using UnityEngine.TestTools;
 using PacManGame;
 using UnityEngine.XR;
 
-public class GhostTests_EM
+public class GhostTest_EM
 {
     private GameObject ghostObject;
     private Ghost ghost;
